@@ -16,7 +16,6 @@ import android.graphics.BitmapFactory;
 import java.io.File;
 
 public class MainActivity extends Activity {
-
     private static final int REQUEST_CAPTURE_IMAGE_ACTIVITY = 100;
     private static final String APP_NAME = "Text2Speed";
     private static final String BUNDLE_KEY_SOFT_RESET = "SOFT_RESET";
@@ -63,7 +62,7 @@ public class MainActivity extends Activity {
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
+        if (! mediaStorageDir.exists()) {
             if (! mediaStorageDir.mkdirs()){
                 Log.d(APP_NAME, "Failed to create directory");
                 return null;
@@ -102,7 +101,6 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -119,5 +117,4 @@ public class MainActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -3,16 +3,9 @@ package com.ttoosr.text2speed.app;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.Environment;
 import android.util.Log;
 
-import com.googlecode.leptonica.android.Pixa;
-import com.googlecode.tesseract.android.ResultIterator;
 import com.googlecode.tesseract.android.TessBaseAPI;
-import com.googlecode.tesseract.android.TessBaseAPI.PageIteratorLevel;
 
 import java.io.File;
 import java.io.FileOutputStream;
