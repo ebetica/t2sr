@@ -37,7 +37,7 @@ public class ImageToText {
         Log.d("PATH_DEBUG", "Actual Path = " + TESSBASE_PATH);
         baseApi = new TessBaseAPI();
         baseApi.init(TESSBASE_PATH, DEFAULT_LANGUAGE);
-        baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO);
+        baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_OSD);
     }
 
     private void copyAssets(Context context) {
