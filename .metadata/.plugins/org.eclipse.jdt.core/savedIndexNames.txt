@@ -1,2 +1,0 @@
-INDEX VERSION 1.126+/home/zeming/hackuva/t2sr/.metadata/.plugins/org.eclipse.jdt.core
-4262319728.index
