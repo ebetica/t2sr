@@ -14,36 +14,42 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class MainActivity extends Activity {
 
     private static final int REQUEST_CAPTURE_IMAGE_ACTIVITY = 100;
     private static final String APP_NAME = "Text2Speed";
+    private static final String BUNDLE_KEY_SOFT_RESET = "SOFT_RESET";
     Uri m_captureUri;
+    ImageToText m_im2txt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri capUri = Uri.fromFile(getOutputMediaFile());;
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, capUri);
-        m_captureUri = capUri;
-        startActivityForResult(intent, REQUEST_CAPTURE_IMAGE_ACTIVITY);
+        if(savedInstanceState != null && savedInstanceState.getBoolean(BUNDLE_KEY_SOFT_RESET)) {
+            m_im2txt = new ImageToText(this, false);
+        } else {
+            m_im2txt = new ImageToText(this, true);
+        }
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri capUri = Uri.fromFile(getOutputMediaFile());
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, capUri);
+        m_captureUri = capUri;
+        startActivityForResult(intent, REQUEST_CAPTURE_IMAGE_ACTIVITY);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
+        outState.putBoolean(BUNDLE_KEY_SOFT_RESET, true);
     }
 
     /** Create a File for saving an image or video */
@@ -84,7 +90,8 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "Failed to read image.", Toast.LENGTH_SHORT);
                     return;
                 }
-                // TODO: pass ocrImg to the OCR code
+                String imgStr = m_im2txt.getString(ocrImg);
+                Log.d(APP_NAME, "Parsed image:\n" + imgStr);
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {

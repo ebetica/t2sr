@@ -29,13 +29,15 @@ public class ImageToText {
 
     private TessBaseAPI baseApi;
 
-    public ImageToText(Context context) {
-        copyAssets(context);
+    public ImageToText(Context context, boolean hardInit) {
+        if(hardInit) {
+            copyAssets(context);
+        }
         TESSBASE_PATH = context.getFilesDir().getPath();
         Log.d("PATH_DEBUG", "Actual Path = " + TESSBASE_PATH);
         baseApi = new TessBaseAPI();
         baseApi.init(TESSBASE_PATH, DEFAULT_LANGUAGE);
-        baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_LINE);
+        baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO);
     }
 
     private void copyAssets(Context context) {
@@ -47,11 +49,11 @@ public class ImageToText {
             Log.e("PATH_DEBUG", "Failed to get asset file list.", e);
         }
         String dir = (new File(context.getFilesDir(), "tessdata")).getPath();
-        File tessdata = new File(dir);
-        if (!tessdata.mkdirs()) Log.d("PATH_DEBUG", "Failed to create tessdata dir");
+        File tessData = new File(dir);
+        if (!tessData.mkdirs()) Log.d("PATH_DEBUG", "Failed to create tessdata dir");
         for(String filename : files) {
-            InputStream in = null;
-            OutputStream out = null;
+            InputStream in;
+            OutputStream out;
             try {
                 in = assetManager.open(filename);
                 File outFile = new File(dir, filename);
@@ -61,10 +63,8 @@ public class ImageToText {
                 copyFile(in, out);
                 Log.d("Copying", "Copied! Now we just need to close the streams");
                 in.close();
-                in = null;
                 out.flush();
                 out.close();
-                out = null;
             } catch(IOException e) {
                 Log.e("PATH", "Failed to copy asset file: " + filename, e);
             }
@@ -76,23 +76,6 @@ public class ImageToText {
         while((read = in.read(buffer)) != -1){
             out.write(buffer, 0, read);
         }
-    }
-
-    public static Bitmap getTextImage(String text, int width, int height) {
-        final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Paint paint = new Paint();
-        final Canvas canvas = new Canvas(bmp);
-
-        canvas.drawColor(Color.WHITE);
-
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setAntiAlias(true);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(24.0f);
-        canvas.drawText(text, width / 2, height / 2, paint);
-
-        return bmp;
     }
 
     public String getString(Bitmap bmp) {
