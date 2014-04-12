@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.widget.Toast;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -17,94 +19,79 @@ import java.util.Date;
 
 public class MainActivity extends Activity {
 
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
-    private static final int MEDIA_TYPE_IMAGE = 1;
-    private static final int MEDIA_TYPE_VIDEO = 2;
+    private static final int REQUEST_CAPTURE_IMAGE_ACTIVITY = 100;
+    private static final String APP_NAME = "Text2Speed";
+    Uri m_captureUri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri capUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+        Uri capUri = Uri.fromFile(getOutputMediaFile());;
         intent.putExtra(MediaStore.EXTRA_OUTPUT, capUri);
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        m_captureUri = capUri;
+        startActivityForResult(intent, REQUEST_CAPTURE_IMAGE_ACTIVITY);
     }
 
     @Override
     public void onStart()
     {
-        Log.d("asdf","HIHIHIH");
+        super.onStart();
     }
 
-    /** Create a file Uri for saving an image or video */
-    private static Uri getOutputMediaFileUri(int type){
-        return Uri.fromFile(getOutputMediaFile(type));
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
     }
 
     /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
+    private static File getOutputMediaFile(){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+                Environment.DIRECTORY_PICTURES), APP_NAME);
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.d(APP_NAME, "Failed to create directory");
                 return null;
             }
         }
-
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_OCR.jpg");
         return mediaFile;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == REQUEST_CAPTURE_IMAGE_ACTIVITY) {
             if (resultCode == RESULT_OK) {
-                // Image captured and saved to fileUri specified in the Intent
-                Toast.makeText(this, "Image saved to:\n" +
-                        data.getData(), Toast.LENGTH_LONG).show();
+                String ocrImgPath = m_captureUri.getPath();
+                Log.d(APP_NAME,"OCR image saved to : "+ocrImgPath);
+                Bitmap ocrImg = BitmapFactory.decodeFile(ocrImgPath);
+                if(ocrImg != null)
+                    Log.d(APP_NAME, "Successfully loaded OCR image.");
+                else {
+                    Log.d(APP_NAME, "OCR image could not be loaded.");
+                    Toast.makeText(this, "Failed to read image.", Toast.LENGTH_SHORT);
+                    return;
+                }
+                // TODO: pass ocrImg to the OCR code
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {
                 // Image capture failed, advise user
             }
         }
-
-        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Video captured and saved to fileUri specified in the Intent
-                Toast.makeText(this, "Video saved to:\n" +
-                        data.getData(), Toast.LENGTH_LONG).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the video capture
-            } else {
-                // Video capture failed, advise user
-            }
-        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
