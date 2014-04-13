@@ -219,4 +219,9 @@ public class AppSpritzer extends Spritzer {
         return uri.getScheme() != null && uri.getScheme().contains("http");
     }
 
+    public String[] getWordArray()
+    {
+        return mWordArray;
+    }
+
 }

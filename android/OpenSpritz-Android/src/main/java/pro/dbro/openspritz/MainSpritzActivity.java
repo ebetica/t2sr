@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
+import com.getpebble.android.kit.Constants;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -25,6 +26,7 @@ import pro.dbro.openspritz.events.ChapterSelectedEvent;
 import pro.dbro.openspritz.events.WpmSelectedEvent;
 import pro.dbro.openspritz.formats.SpritzerMedia;
 import pro.dbro.openspritz.R;
+import com.getpebble.android.kit.PebbleKit;
 
 public class MainSpritzActivity extends ActionBarActivity implements View.OnSystemUiVisibilityChangeListener {
     private static final String TAG = "OSPR:MainSpritzActivity";

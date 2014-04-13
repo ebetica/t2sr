@@ -1,1 +1,1 @@
-include ':tesstwo', ':OpenSpritz-Android', 'Text2Speed', 'OpenSpritz'
+include ':tesstwo', ':OpenSpritz-Android', 'Text2Speed', 'OpenSpritz', 'PebbleKit'

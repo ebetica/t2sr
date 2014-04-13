@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.getpebble.android.kit.Constants;
+import com.getpebble.android.kit.PebbleKit;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 

@@ -97,7 +97,7 @@ public class Spritzer {
     private void createWordArrayFromString(String input) {
         String str = input
                 .replaceAll("(\\s|\\n)+", " ");       // condense adjacent spaces
-        mWordArray = str.split(" ");                           // split on spaces
+        mWordArray = str.split(" ");                  // split on spaces
     }
 
     protected void init() {
@@ -399,7 +399,7 @@ public class Spritzer {
         }
     }
 
-    private int delayMultiplierForWord(String word) {
+    public static int delayMultiplierForWord(String word) {
         // double rest if length > 6 or contains (.,!?)
         if (word.length() >= 6 || word.contains(",") || word.contains(":") || word.contains(";") || word.contains(".") || word.contains("?") || word.contains("!") || word.contains("\"")) {
             return 3;
@@ -442,6 +442,5 @@ public class Spritzer {
                     throw new RuntimeException("Unexpected msg what=" + what);
             }
         }
-
     }
 }
