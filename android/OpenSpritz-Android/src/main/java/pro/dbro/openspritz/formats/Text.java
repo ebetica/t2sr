@@ -46,7 +46,7 @@ public class Text implements SpritzerMedia {
 
     @Override
     public String getTitle() {
-        return "OCR";
+        return "";
     }
 
     @Override

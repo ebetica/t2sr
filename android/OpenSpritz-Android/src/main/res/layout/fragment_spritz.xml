@@ -78,7 +78,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:enabled="true"
+        android:enabled="false"
         android:onClick="wpmButtonOnClick"
         android:focusable="true"
         android:focusableInTouchMode="true"
