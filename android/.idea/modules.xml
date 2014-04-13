@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/OpenSpritz/OpenSpritz.iml" filepath="$PROJECT_DIR$/OpenSpritz/OpenSpritz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenSpritz-Android/OpenSpritz-Android.iml" filepath="$PROJECT_DIR$/OpenSpritz-Android/OpenSpritz-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Text2Speed/Text2Speed.iml" filepath="$PROJECT_DIR$/Text2Speed/Text2Speed.iml" />
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/t2sr.iml" filepath="$PROJECT_DIR$/t2sr.iml" />
       <module fileurl="file://$PROJECT_DIR$/tesstwo/tesstwo.iml" filepath="$PROJECT_DIR$/tesstwo/tesstwo.iml" />
     </modules>
