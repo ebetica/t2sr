@@ -61,7 +61,7 @@ public class AppSpritzer extends Spritzer {
         super(target);
         setEventBus(bus);
         openMedia(mediaUri);
-        mTarget.setText("Touc22hToS22tart");
+        mTarget.setText("Touch 2 Start");
     }
 
     public void setMediaUri(Uri uri) {
@@ -120,6 +120,11 @@ public class AppSpritzer extends Spritzer {
         setText(loadCleanStringFromChapter(mChapter));
         saveState();
     }
+
+    public String stealChapter(int chapter) {
+        return loadCleanStringFromChapter(chapter);
+    }
+
 
     public int getCurrentChapter() {
         return mChapter;
@@ -206,13 +211,13 @@ public class AppSpritzer extends Spritzer {
             setText(loadCleanStringFromChapter(mChapter));
         }
         if (!mPlaying) {
-            mTarget.setText("tuch2stert");
+            mTarget.setText("Touch to Start");
         }
     }
 
     private void reportFileUnsupported() {
 
-        Toast.makeText(mTarget.getContext(), "ggnotsupported file gg", Toast.LENGTH_LONG).show();
+        Toast.makeText(mTarget.getContext(), "File not supported gg", Toast.LENGTH_LONG).show();
     }
 
     public static boolean isHttpUri(Uri uri) {

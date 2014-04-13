@@ -32,12 +32,16 @@ public class WpmDialogFragment extends DialogFragment {
     private int mWpm;
     private Bus mBus;
 
-    static WpmDialogFragment newInstance(int wpm) {
+    private String mAllText;
+    private TextView mAllTextArea;
+
+    static WpmDialogFragment newInstance(int wpm, String rawTextTemp) {
         WpmDialogFragment f = new WpmDialogFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
         args.putInt("wpm", wpm);
+        args.putString("rawText",rawTextTemp);
         f.setArguments(args);
 
         return f;
@@ -49,9 +53,12 @@ public class WpmDialogFragment extends DialogFragment {
         mWpm = Math.max(MIN_WPM, getArguments().getInt("wpm"));
         mAnimationRunning = false;
 
+        mAllText = getArguments().getString("rawText");
+
         OpenSpritzApplication app = (OpenSpritzApplication) getActivity().getApplication();
         this.mBus = app.getBus();
     }
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -62,6 +69,8 @@ public class WpmDialogFragment extends DialogFragment {
 
         mWpmSeek.setProgress((int) ((float) 100 * mWpm / MAX_WPM));
         mWpmLabel.setText(mWpm + " WPM");
+        mAllTextArea = (TextView) v.findViewById(R.id.rawTextView);
+        mAllTextArea.setText(mAllText);
 
         mWpmSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

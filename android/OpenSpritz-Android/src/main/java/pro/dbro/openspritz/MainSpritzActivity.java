@@ -37,6 +37,7 @@ public class MainSpritzActivity extends ActionBarActivity implements View.OnSyst
 
     private int mWpm;
     private Bus mBus;
+    private String rawText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +116,7 @@ public class MainSpritzActivity extends ActionBarActivity implements View.OnSyst
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_speed) {
+        if (id == R.id.wpmButton) {
             if (mWpm == 0) {
                 if (getSpritzFragment().getSpritzer() != null) {
                     mWpm = getSpritzFragment().getSpritzer().getWpm();
@@ -123,8 +124,15 @@ public class MainSpritzActivity extends ActionBarActivity implements View.OnSyst
                     mWpm = 500;
                 }
             }
+            SpritzFragment frag = getSpritzFragment();
+            if (frag != null && frag.getSpritzer() != null) {
+                rawText = frag.getSpritzer().stealChapter(frag.getSpritzer().getCurrentChapter());
+                //frag.updateMetaUi();
+            }
+
+
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            DialogFragment newFragment = WpmDialogFragment.newInstance(mWpm);
+            DialogFragment newFragment = WpmDialogFragment.newInstance(mWpm,rawText);
             newFragment.show(ft, "dialog");
             return true;
         } else if (id == R.id.action_theme) {
@@ -141,6 +149,19 @@ public class MainSpritzActivity extends ActionBarActivity implements View.OnSyst
         return super.onOptionsItemSelected(item);
     }
 
+    @Subscribe
+    public void wpmButtonOnClick(View v) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        SpritzFragment frag = getSpritzFragment();
+        if (frag != null && frag.getSpritzer() != null) {
+            rawText = frag.getSpritzer().stealChapter(frag.getSpritzer().getCurrentChapter());
+            //frag.updateMetaUi();
+        }
+
+        DialogFragment newFragment = WpmDialogFragment.newInstance(mWpm,rawText);
+        newFragment.show(ft, "dialog");
+    }
     @Subscribe
     public void onWpmSelected(WpmSelectedEvent event) {
         if (getSpritzFragment() != null) {

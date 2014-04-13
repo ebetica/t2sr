@@ -7,12 +7,12 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/OpenSpritz" />
-            <option value="$PROJECT_DIR$/OpenSpritz-Android" />
-            <option value="$PROJECT_DIR$/PebbleKit" />
-            <option value="$PROJECT_DIR$/Text2Speed" />
-            <option value="$PROJECT_DIR$/tesstwo" />
+            <option value="C:\Users\Edik\assProjects\t2sr\android" />
+            <option value="C:\Users\Edik\assProjects\t2sr\android\OpenSpritz" />
+            <option value="C:\Users\Edik\assProjects\t2sr\android\OpenSpritz-Android" />
+            <option value="C:\Users\Edik\assProjects\t2sr\android\PebbleKit" />
+            <option value="C:\Users\Edik\assProjects\t2sr\android\Text2Speed" />
+            <option value="C:\Users\Edik\assProjects\t2sr\android\tesstwo" />
           </set>
         </option>
       </GradleProjectSettings>

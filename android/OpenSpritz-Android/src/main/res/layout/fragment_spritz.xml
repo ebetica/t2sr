@@ -22,27 +22,27 @@
         style="@style/SubduedTextStyle"
         android:layout_width="@dimen/spritzer_title_width"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="@dimen/spritzer_title_margin_left"
-        android:layout_marginTop="@dimen/spritzer_title_margin_top"
         android:textStyle="italic"
         android:ellipsize="marquee"
         android:fontFamily="sans-serif-condensed"
         android:singleLine="true"
-        android:textSize="@dimen/spritzer_title_text_size" />
+        android:textSize="@dimen/spritzer_title_text_size"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/author"
         style="@style/SubduedTextStyle"
         android:layout_width="@dimen/spritzer_author_width"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_below="@id/title"
         android:ellipsize="marquee"
         android:fontFamily="sans-serif-condensed"
         android:singleLine="true"
-        android:textSize="@dimen/spritzer_author_text_size" />
+        android:textSize="@dimen/spritzer_author_text_size"
+        android:layout_below="@+id/wpmButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <ProgressBar
         android:id="@+id/progress"
@@ -68,4 +68,23 @@
         android:fontFamily="sans-serif-condensed"
         android:textColor="@color/chapter_text_color"
         android:textSize="@dimen/chapter_text_size" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="read raw"
+        android:id="@+id/wpmButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:enabled="true"
+        android:onClick="wpmButtonOnClick"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:layout_toLeftOf="@+id/title"
+        android:layout_alignBottom="@+id/title"
+        android:background="#4d0e7c"
+        android:textColor="#ffffff" />
 </RelativeLayout>
