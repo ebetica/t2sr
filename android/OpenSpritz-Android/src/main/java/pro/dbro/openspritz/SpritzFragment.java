@@ -1,5 +1,6 @@
 package pro.dbro.openspritz;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import com.getpebble.android.kit.util.PebbleDictionary;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.UUID;
 
 import pro.dbro.openspritz.events.ChapterSelectRequested;
@@ -32,6 +36,11 @@ import pro.dbro.openspritz.lib.events.SpritzFinishedEvent;
 public class SpritzFragment extends Fragment {
     private static final String TAG = "SpritzFragment";
     private static final UUID PEBBLE_APP_UUID = UUID.fromString("7f55192e-b517-4a29-b946-05a748c00499");
+    private static final int PEBBLE_MESSAGE_WORDS = 0x10;
+    private static final int PEBBLE_MESSAGE_SPEEDS = 0x20;
+    private static final int PEBBLE_MESSAGE_CENTERS = 0x30;
+    private static final int PEBBLE_MESSAGE_END = 0x40;
+    private static final int PEBBLE_OUTGOING_BYTES = 64;
 
     private static AppSpritzer mSpritzer;
     private TextView mAuthorView;
@@ -40,6 +49,10 @@ public class SpritzFragment extends Fragment {
     private ProgressBar mProgress;
     private SpritzerTextView mSpritzView;
     private Bus mBus;
+
+    private int ind = 0;
+    private int max = 0;
+    private boolean fin = false;
 
     public static SpritzFragment newInstance() {
         SpritzFragment fragment = new SpritzFragment();
@@ -64,27 +77,108 @@ public class SpritzFragment extends Fragment {
 
         if(PebbleKit.isWatchConnected(getActivity()))
         {
-            PebbleKit.customizeWatchApp(getActivity(), Constants.PebbleAppType.OTHER, "Text2Speed", null);
+            Log.d("SpritzPebble","Pebble is connected!");
             String[] wordArray = mSpritzer.getWordArray();
             byte[] delayArray = new byte[wordArray.length];
             byte[] startArray = new byte[wordArray.length];
             for(int i = 0 ; i < wordArray.length; ++i) {
-                int delaymult = mSpritzer.delayMultiplierForWord(wordArray[i]);
-                if(delaymult < 1)
+                int delayMult = mSpritzer.delayMultiplierForWord(wordArray[i]);
+                if(delayMult < 1)
                     delayArray[i] = 1;
-                else if(delaymult > Byte.MAX_VALUE)
+                else if(delayMult > Byte.MAX_VALUE)
                     delayArray[i] = Byte.MAX_VALUE;
                 else
-                    delayArray[i] = (byte)delaymult;
+                    delayArray[i] = (byte)delayMult;
                 startArray[i] = 0;
             }
-            PebbleDictionary dataDict = new PebbleDictionary();
             StringBuilder strBld = new StringBuilder();
             for(String str: wordArray) {
                 strBld.append(str).append(' ');
             }
-            dataDict.addString(0, strBld.toString());
+            final String words = strBld.append(' ').toString();
+            Normalizer.normalize(words, Normalizer.Form.NFC);
+
+            max = words.length() / PEBBLE_OUTGOING_BYTES + (words.length() % PEBBLE_OUTGOING_BYTES > 0 ? 1 : 0);
+            PebbleKit.registerReceivedAckHandler(mSpritzView.getContext(), new PebbleKit.PebbleAckReceiver(PEBBLE_APP_UUID) {
+                @Override
+                public void receiveAck(Context context, int transactionId) {
+                    Log.i(TAG, "Received ack for transaction " + transactionId);
+                    if (!fin) {
+                        ind++;
+                        if (ind == max) {
+                            Log.i(TAG, "Finished sending messages.");
+                            fin = true;
+                            ind = 0;
+                            max = 0;
+                            sendPebbleData(PEBBLE_MESSAGE_END, "End.");
+                        }
+                        else {
+                            sendPebbleString(PEBBLE_MESSAGE_WORDS, words);
+                        }
+                    }
+                }
+            });
+
+            PebbleKit.registerReceivedNackHandler(mSpritzView.getContext(), new PebbleKit.PebbleNackReceiver(PEBBLE_APP_UUID) {
+                @Override
+                public void receiveNack(Context context, int transactionId) {
+                    Log.i(TAG, "Received nack for transaction " + transactionId);
+                    if (!fin) {
+                        sendPebbleString(PEBBLE_MESSAGE_WORDS, words);
+                    }
+                }
+            });
+            sendPebbleString(PEBBLE_MESSAGE_WORDS, words);
+        } else {
+            Log.d("SpritzPebble", "No Pebble!");
+        }
+    }
+
+    private void sendPebbleString(int upperByte, String data) {
+        int begin = ind*PEBBLE_OUTGOING_BYTES;
+        int end = (ind+1)*PEBBLE_OUTGOING_BYTES;
+        if(end > data.length())
+            end = data.length();
+        String str = data.substring(begin, end);
+        PebbleDictionary dataDict = new PebbleDictionary();
+        dataDict.addString(upperByte << 24 | ind, str);
+        Log.d("SpritzPebble", "Starting Pebble app.");
+        PebbleKit.startAppOnPebble(getActivity(), PEBBLE_APP_UUID);
+        Log.d("SpritzPebble", "Sending data to Pebble app.");
+        PebbleKit.sendDataToPebble(getActivity(), PEBBLE_APP_UUID, dataDict);
+    }
+
+    private void sendPebbleData(int upperByte, String data)
+    {
+        int nummsgs = data.length() / PEBBLE_OUTGOING_BYTES + (data.length() % PEBBLE_OUTGOING_BYTES > 0 ? 1 : 0);
+        for(int i = 0; i < nummsgs; ++i) {
+            int begin = i*PEBBLE_OUTGOING_BYTES;
+            int end = (i+1)*PEBBLE_OUTGOING_BYTES;
+            if(end > data.length())
+                end = data.length();
+            String str = data.substring(begin, end);
+            PebbleDictionary dataDict = new PebbleDictionary();
+            dataDict.addString(upperByte << 24 | i, str);
+            Log.d("SpritzPebble", "Starting Pebble app.");
             PebbleKit.startAppOnPebble(getActivity(), PEBBLE_APP_UUID);
+            Log.d("SpritzPebble", "Sending data to Pebble app.");
+            PebbleKit.sendDataToPebble(getActivity(), PEBBLE_APP_UUID, dataDict);
+        }
+    }
+    private void sendPebbleData(int upperByte, byte[] data)
+    {
+        int nummsgs = data.length / PEBBLE_OUTGOING_BYTES + (data.length % PEBBLE_OUTGOING_BYTES > 0 ? 1 : 0);
+        for(int i = 0; i < nummsgs; ++i) {
+            int begin = i*PEBBLE_OUTGOING_BYTES;
+            int end = (i+1)*PEBBLE_OUTGOING_BYTES;
+            if(end > data.length)
+                end = data.length;
+            byte[] sendData = Arrays.copyOfRange(data,begin,end);
+            PebbleDictionary dataDict = new PebbleDictionary();
+            dataDict.addBytes(upperByte << 24 | i, sendData);
+            Log.d("SpritzPebble", "Starting Pebble app.");
+            PebbleKit.startAppOnPebble(getActivity(), PEBBLE_APP_UUID);
+            Log.d("SpritzPebble", "Sending data to Pebble app.");
             PebbleKit.sendDataToPebble(getActivity(), PEBBLE_APP_UUID, dataDict);
         }
     }
