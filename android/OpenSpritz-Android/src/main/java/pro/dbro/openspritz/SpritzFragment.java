@@ -16,8 +16,11 @@ import android.widget.TextView;
 
 import com.getpebble.android.kit.Constants;
 import com.getpebble.android.kit.PebbleKit;
+import com.getpebble.android.kit.util.PebbleDictionary;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import java.util.UUID;
 
 import pro.dbro.openspritz.events.ChapterSelectRequested;
 import pro.dbro.openspritz.events.HttpUrlParsedEvent;
@@ -28,6 +31,7 @@ import pro.dbro.openspritz.lib.events.SpritzFinishedEvent;
 
 public class SpritzFragment extends Fragment {
     private static final String TAG = "SpritzFragment";
+    private static final UUID PEBBLE_APP_UUID = UUID.fromString("7f55192e-b517-4a29-b946-05a748c00499");
 
     private static AppSpritzer mSpritzer;
     private TextView mAuthorView;
@@ -56,6 +60,32 @@ public class SpritzFragment extends Fragment {
 
         if (AppSpritzer.isHttpUri(mediaUri)) {
             showIndeterminateProgress(true);
+        }
+
+        if(PebbleKit.isWatchConnected(getActivity()))
+        {
+            PebbleKit.customizeWatchApp(getActivity(), Constants.PebbleAppType.OTHER, "Text2Speed", null);
+            String[] wordArray = mSpritzer.getWordArray();
+            byte[] delayArray = new byte[wordArray.length];
+            byte[] startArray = new byte[wordArray.length];
+            for(int i = 0 ; i < wordArray.length; ++i) {
+                int delaymult = mSpritzer.delayMultiplierForWord(wordArray[i]);
+                if(delaymult < 1)
+                    delayArray[i] = 1;
+                else if(delaymult > Byte.MAX_VALUE)
+                    delayArray[i] = Byte.MAX_VALUE;
+                else
+                    delayArray[i] = (byte)delaymult;
+                startArray[i] = 0;
+            }
+            PebbleDictionary dataDict = new PebbleDictionary();
+            StringBuilder strBld = new StringBuilder();
+            for(String str: wordArray) {
+                strBld.append(str).append(' ');
+            }
+            dataDict.addString(0, strBld.toString());
+            PebbleKit.startAppOnPebble(getActivity(), PEBBLE_APP_UUID);
+            PebbleKit.sendDataToPebble(getActivity(), PEBBLE_APP_UUID, dataDict);
         }
     }
 

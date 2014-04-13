@@ -54,6 +54,8 @@ public class MainActivity extends Activity {
             m_captureUri = savedInstanceState.getParcelable(BUNDLE_KEY_CAPTURE_URI);
             m_parsedText = savedInstanceState.getString(BUNDLE_KEY_PARSED_TEXT);
             m_mode = (ResumeMode)savedInstanceState.getSerializable(BUNDLE_KEY_MODE);
+        } else {
+            m_im2txt = new ImageToText(this, true);
         }
         Log.d(APP_NAME,m_mode.toString());
         Log.d(APP_NAME,String.valueOf(m_captureUri));
