@@ -50,12 +50,12 @@ public class Text implements SpritzerMedia {
 
     @Override
     public String getAuthor() {
-        return "You!";
+        return "";
     }
 
     @Override
     public String getChapterTitle(int chapterNumber) {
-        return "MOTHERFUCKING SHIT HELL JESUS FUCK.";
+        return "";
     }
 
     @Override
