@@ -26,7 +26,7 @@ public class Text implements SpritzerMedia {
             reader = new BufferedReader(
                     new FileReader(file));
         } catch (FileNotFoundException e) {
-            Log.e("");
+            Log.e("err","err");
         }
         char[] buf = new char[1024];
         int numRead=0;
@@ -37,7 +37,8 @@ public class Text implements SpritzerMedia {
             }
             reader.close();
         } catch (IOException e) {
-            Log.e("");
+
+            Log.e("err","err");
         }
         t.m_text = fileData.toString();
         return t;
@@ -50,7 +51,7 @@ public class Text implements SpritzerMedia {
 
     @Override
     public String getAuthor() {
-        return "You!";
+        return "";
     }
 
     @Override
