@@ -24,9 +24,10 @@ import pro.dbro.openspritz.events.ChapterSelectRequested;
 import pro.dbro.openspritz.events.ChapterSelectedEvent;
 import pro.dbro.openspritz.events.WpmSelectedEvent;
 import pro.dbro.openspritz.formats.SpritzerMedia;
+import pro.dbro.openspritz.R;
 
-public class MainActivity extends ActionBarActivity implements View.OnSystemUiVisibilityChangeListener {
-    private static final String TAG = "OSPR:MainActivity";
+public class MainSpritzActivity extends ActionBarActivity implements View.OnSystemUiVisibilityChangeListener {
+    private static final String TAG = "OSPR:MainSpritzActivity";
     public static final String SPRITZ_FRAG_TAG = "spritzfrag";
     private static final String PREFS = "ui_prefs";
     private static final int THEME_LIGHT = 0;
@@ -37,7 +38,7 @@ public class MainActivity extends ActionBarActivity implements View.OnSystemUiVi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG,"Creating MainActivity.");
+        Log.d(TAG,"Creating MainSpritzActivity.");
         int theme = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .getInt("THEME", 0);
         switch (theme) {
@@ -48,21 +49,15 @@ public class MainActivity extends ActionBarActivity implements View.OnSystemUiVi
                 setTheme(R.style.Dark);
                 break;
         }
-        Log.d(TAG,"1.");
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"2.");
         setupActionBar();
-        Log.d(TAG,"3.");
         setContentView(R.layout.activity_main);
-        Log.d(TAG,"4.");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, new SpritzFragment(), SPRITZ_FRAG_TAG)
                 .commit();
-        Log.d(TAG,"5.");
         OpenSpritzApplication app = (OpenSpritzApplication) getApplication();
         this.mBus = app.getBus();
         this.mBus.register(this);
-
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
     }
 
@@ -74,19 +69,26 @@ public class MainActivity extends ActionBarActivity implements View.OnSystemUiVi
         String action = getIntent().getAction();
         Uri intentUri = null;
         if (action.equals(Intent.ACTION_VIEW)) {
+            Log.d(TAG,"ACTION_VIEW");
             intentIncludesMediaUri = true;
             intentUri = getIntent().getData();
-
+            if(intentUri != null)
+                Log.d(TAG,"URI passed: " + intentUri.toString());
+            else
+                Log.d(TAG,"No URI passed!");
         } else if (action.equals(Intent.ACTION_SEND)) {
+            Log.d(TAG,"ACTION_SEND");
             intentIncludesMediaUri = true;
             intentUri = Uri.parse(getIntent().getStringExtra(Intent.EXTRA_TEXT));
+            Log.d(TAG,"URI passed: " + intentUri.toString());
+        } else {
+            Log.d(TAG,"No URI passed!");
         }
-
         if (intentIncludesMediaUri && intentUri != null) {
             SpritzFragment frag = getSpritzFragment();
             frag.feedMediaUriToSpritzer(intentUri);
         }
-
+        setResult(RESULT_OK);
     }
 
     @Override

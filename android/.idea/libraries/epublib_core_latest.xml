@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="epublib-core-latest">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/OpenSpritz-Android/libs/epublib-core-latest.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Text2Speed/build/exploded-aar/android/OpenSpritz-Android/unspecified/libs/epublib-core-latest.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -16,7 +16,10 @@ import android.graphics.BitmapFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+
+import pro.dbro.openspritz.MainSpritzActivity;
 
 public class MainActivity extends Activity {
     enum ResumeMode
@@ -41,7 +44,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_t2sr_main);
         if(savedInstanceState != null) {
             if(savedInstanceState.getBoolean(BUNDLE_KEY_SOFT_RESET)) {
                 m_im2txt = new ImageToText(this, false);
@@ -172,15 +175,15 @@ public class MainActivity extends Activity {
         }
         File txtFile = getOutputTextFile();
         try {
-            FileOutputStream ofStream = new FileOutputStream(txtFile);
-            PrintWriter ofWriter = new PrintWriter(ofStream);
-            ofWriter.print(txtFile);
+            PrintWriter ofWriter = new PrintWriter(new FileOutputStream(txtFile));
+            ofWriter.print(text);
+            ofWriter.close();
         } catch (FileNotFoundException e) {
-            Log.d(APP_NAME,"FUCK FUCK FUCK");
+            Log.d(APP_NAME,"FUCK SHIT STACK");
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.fromFile(txtFile));
-        intent.setClass(this, pro.dbro.openspritz.MainActivity.class);
+        intent.setClass(this, MainSpritzActivity.class);
         startActivityForResult(intent, REQUEST_VIEW_OCR_TEXT);
     }
     public void activateOCRImageCamera()

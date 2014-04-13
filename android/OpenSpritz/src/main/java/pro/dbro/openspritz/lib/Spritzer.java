@@ -95,9 +95,9 @@ public class Spritzer {
      * @param input
      */
     private void createWordArrayFromString(String input) {
-        mWordArray = input
-                .replaceAll("/\\s+/g", " ")      // condense adjacent spaces
-                .split(" ");                     // split on spaces
+        String str = input
+                .replaceAll("(\\s|\\n)+", " ");       // condense adjacent spaces
+        mWordArray = str.split(" ");                           // split on spaces
     }
 
     protected void init() {
